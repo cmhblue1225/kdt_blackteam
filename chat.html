@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>채팅 - 채팅 창</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -14,11 +16,10 @@
         body {
             font-family: 'Noto Sans KR', sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
         }
         .chat-container {
             width: 390px;
@@ -26,23 +27,22 @@
             background-color: white;
             border-radius: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
         }
         .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             padding: 15px 20px;
             border-bottom: 1px solid #dfe6e9;
             background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
         .back-btn {
             background: none;
             border: none;
             font-size: 20px;
-            cursor: pointer;
             color: #2c3e50;
             transition: color 0.3s ease;
         }
@@ -67,21 +67,17 @@
             color: #2c3e50;
             margin: 0;
         }
-        .header-buttons {
-            display: flex;
-            gap: 8px;
-        }
         .header-buttons button {
             padding: 6px 12px;
             border: none;
             border-radius: 25px;
             font-size: 13px;
             font-weight: 600;
-            cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            color: white;
         }
         .header-buttons button:hover {
             transform: translateY(-2px);
@@ -89,21 +85,18 @@
         }
         .payment-btn {
             background: linear-gradient(135deg, #28a745, #34c759);
-            color: white;
         }
         .payment-btn:hover {
             background: linear-gradient(135deg, #218838, #2db34a);
         }
         .block-btn {
             background: linear-gradient(135deg, #dc3545, #ff5765);
-            color: white;
         }
         .block-btn:hover {
             background: linear-gradient(135deg, #c82333, #e84351);
         }
         .report-btn {
             background: linear-gradient(135deg, #2c3e50, #4a6278);
-            color: white;
         }
         .report-btn:hover {
             background: linear-gradient(135deg, #34495e, #5a738c);
@@ -134,7 +127,6 @@
             max-width: 70%;
             padding: 10px 15px;
             border-radius: 15px;
-            position: relative;
         }
         .message.other .message-bubble {
             background-color: #ecf0f1;
@@ -185,7 +177,6 @@
             align-items: center;
             justify-content: center;
             font-size: 16px;
-            cursor: pointer;
             transition: background-color 0.3s ease, transform 0.1s ease;
         }
         .send-btn:hover {
@@ -204,7 +195,6 @@
             transform: scale(1.2);
         }
         .emoji-panel {
-            display: none;
             position: absolute;
             bottom: 60px;
             left: 20px;
@@ -213,9 +203,9 @@
             border-radius: 15px;
             padding: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            z-index: 10;
             max-height: 200px;
             overflow-y: auto;
+            display: none;
         }
         .emoji-panel span {
             font-size: 24px;
@@ -227,38 +217,24 @@
         .emoji-panel span:hover {
             transform: scale(1.2);
         }
-        .popup {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .popup-content {
-            background-color: white;
-            padding: 20px;
+        .modal-content {
             border-radius: 15px;
-            text-align: center;
-            width: 300px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
         }
-        .popup-profile-pic {
+        .modal-profile-pic {
             width: 100px;
             height: 100px;
             border-radius: 50%;
             margin-bottom: 15px;
         }
-        .popup-content h3 {
+        .modal-content h3 {
             font-size: 20px;
             color: #2c3e50;
             margin-bottom: 10px;
         }
-        .popup-content p {
+        .modal-content p {
             font-size: 14px;
             color: #7f8c8d;
             margin-bottom: 5px;
@@ -269,9 +245,6 @@
             border: none;
             padding: 8px 15px;
             border-radius: 8px;
-            cursor: pointer;
-            margin-top: 15px;
-            margin-right: 10px; /* 팔로우 버튼과 간격 */
             transition: background-color 0.3s ease;
         }
         .close-btn:hover {
@@ -283,18 +256,16 @@
             border: none;
             padding: 8px 15px;
             border-radius: 8px;
-            cursor: pointer;
-            margin-top: 15px;
             transition: all 0.3s ease;
             font-size: 14px;
             font-weight: 500;
             display: inline-flex;
             align-items: center;
-            gap: 5px; /* 텍스트와 하트 간격 */
+            gap: 5px;
         }
         .follow-btn.following {
-            background-color: #ffe6f0; /* 팔로우 중일 때 연한 분홍색 배경 */
-            color: #e91e63; /* 분홍색 텍스트 */
+            background-color: #ffe6f0;
+            color: #e91e63;
         }
         .follow-btn:hover {
             background-color: #dfe6e9;
@@ -306,7 +277,7 @@
             font-size: 16px;
         }
         .follow-btn.following span.heart {
-            color: #e91e63; /* 분홍색 하트 */
+            color: #e91e63;
         }
     </style>
 </head>
@@ -318,69 +289,16 @@
                 <img src="images/profile1.jpg" alt="프로필 사진" class="profile-pic">
                 <h2>조민혁</h2>
             </div>
-            <div class="header-buttons">
+            <div class="header-buttons d-flex gap-2">
                 <button class="payment-btn" onclick="confirmPayment()">결제</button>
                 <button class="block-btn" onclick="confirmBlock()">차단</button>
                 <button class="report-btn" onclick="confirmReport()">신고</button>
             </div>
         </div>
-        <div class="chat-content" id="chatContent">
-            <div class="message current">
-                <div class="message-bubble">
-                    <p>안녕하세요, 악기 매니아입니다. 하남 정비 장비를 12월 1일부터 3일간 대여하고 싶습니다.</p>
-                    <span class="timestamp">2023년 11월 30일 오전 9:41</span>
-                </div>
-            </div>
-            <div class="message other">
-                <img src="images/profile1.jpg" alt="프로필 사진" class="message-profile-pic">
-                <div class="message-bubble">
-                    <p>안녕하세요, 조민혁입니다. 네, 가능합니다. 어떤 장비가 필요하신가요?</p>
-                    <span class="timestamp">2023년 11월 30일 오전 9:42</span>
-                </div>
-            </div>
-            <div class="message current">
-                <div class="message-bubble">
-                    <p>디그램 해양 장비 3개를 대여하고 싶습니다.</p>
-                    <span class="timestamp">2023년 11월 30일 오전 9:43</span>
-                </div>
-            </div>
-            <div class="message other">
-                <img src="images/profile1.jpg" alt="프로필 사진" class="message-profile-pic">
-                <div class="message-bubble">
-                    <p>알겠습니다. 내일 바로 사용하실 건가요?</p>
-                    <span class="timestamp">2023년 11월 30일 오전 9:44</span>
-                </div>
-            </div>
-            <div class="message current">
-                <div class="message-bubble">
-                    <p>네, 내일 사용하겠습니다.</p>
-                    <span class="timestamp">2023년 11월 30일 오전 9:45</span>
-                </div>
-            </div>
-            <div class="message other">
-                <img src="images/profile1.jpg" alt="프로필 사진" class="message-profile-pic">
-                <div class="message-bubble">
-                    <p>좋습니다! 대여 절차를 진행해주세요.</p>
-                    <span class="timestamp">2023년 11월 30일 오전 9:46</span>
-                </div>
-            </div>
-            <div class="message current">
-                <div class="message-bubble">
-                    <p>결제는 어떻게 진행하나요?</p>
-                    <span class="timestamp">2023년 11월 30일 오전 9:47</span>
-                </div>
-            </div>
-            <div class="message other">
-                <img src="images/profile1.jpg" alt="프로필 사진" class="message-profile-pic">
-                <div class="message-bubble">
-                    <p>위에 결제 버튼을 누르시면 됩니다.</p>
-                    <span class="timestamp">2023년 11월 30일 오전 9:48</span>
-                </div>
-            </div>
-        </div>
+        <div class="chat-content" id="chatContent"></div>
         <div class="message-input-area">
             <div class="input-container">
-                <input type="text" id="messageInput" placeholder="메시지 입력...">
+                <input type="text" id="messageInput" placeholder="메시지 입력..." class="form-control">
                 <button class="send-btn" onclick="sendMessage()">➡️</button>
             </div>
             <button class="icon-btn">🎙️</button>
@@ -392,167 +310,160 @@
                 <span onclick="sendEmoji('😍')">😍</span>
                 <span onclick="sendEmoji('🥳')">🥳</span>
                 <span onclick="sendEmoji('😢')">😢</span>
-                <span onclick="sendEmoji('👍')">👍</span>
-                <span onclick="sendEmoji('👏')">👏</span>
-                <span onclick="sendEmoji('🙌')">🙌</span>
-                <span onclick="sendEmoji('❤️')">❤️</span>
-                <span onclick="sendEmoji('🔥')">🔥</span>
             </div>
         </div>
     </div>
 
-    <!-- 팝업 추가 -->
-    <div class="popup" id="profilePopup">
-        <div class="popup-content">
-            <img src="images/profile1.jpg" alt="프로필 사진" class="popup-profile-pic">
-            <h3>조민혁</h3>
-            <p>이메일: chominhyuk@naver.com</p>
-            <p>전화번호: 010-5116-5305</p>
-            <p>지역: 서울시 강북구</p>
-            <button class="close-btn" onclick="hidePopup()">닫기</button>
-            <button class="follow-btn" id="followBtn" onclick="toggleFollow()">
-                <span id="followText">팔로우</span>
-                <span class="heart" id="followHeart">♡</span>
-            </button>
+    <!-- 팝업 (Bootstrap Modal) -->
+    <div class="modal fade" id="profilePopup" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <img src="images/profile1.jpg" alt="프로필 사진" class="modal-profile-pic">
+                <h3>조민혁</h3>
+                <p>이메일: chominhyuk@naver.com</p>
+                <p>전화번호: 010-5116-5305</p>
+                <p>지역: 서울시 강북구</p>
+                <button class="close-btn" onclick="hidePopup()">닫기</button>
+                <button class="follow-btn" id="followBtn" onclick="toggleFollow()">
+                    <span id="followText">팔로우</span>
+                    <span class="heart" id="followHeart">♡</span>
+                </button>
+            </div>
         </div>
     </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function goToLogin() {
-            window.location.href = "login.html";
-        }
-        function goToHome() {
-            window.location.href = "home.html";
-        }
-        function goToSend() {
-            window.location.href = "pay.html";
+        // 초기 데이터 설정
+        const initialMessages = [
+            { type: "current", text: "안녕하세요, 악기 매니아입니다. 하남 정비 장비를 12월 1일부터 3일간 대여하고 싶습니다.", timestamp: "2023년 11월 30일 오전 9:41" },
+            { type: "other", text: "안녕하세요, 조민혁입니다. 네, 가능합니다. 어떤 장비가 필요하신가요?", timestamp: "2023년 11월 30일 오전 9:42" },
+            { type: "current", text: "디그램 해양 장비 3개를 대여하고 싶습니다.", timestamp: "2023년 11월 30일 오전 9:43" }
+        ];
+
+        // 로컬스토리지 초기화
+        if (!localStorage.getItem("chatMessages")) {
+            localStorage.setItem("chatMessages", JSON.stringify(initialMessages));
         }
 
-        function confirmPayment() {
-        if (confirm("결제하시겠습니까?")) {
-            goToSend(); // 확인을 누르면 goToSend() 실행
-        } else {
-            alert("결제가 취소되었습니다.");
-        }
-        }
-
-
-        function confirmBlock() {
-            if (confirm("차단하시겠습니까?")) {
-                alert("차단되었습니다.");
-            } else {
-                alert("차단이 취소되었습니다.");
-            }
-        }
-
-        function confirmReport() {
-            if (confirm("신고하시겠습니까?")) {
-                alert("신고가 접수되었습니다.");
-            } else {
-                alert("신고가 취소되었습니다.");
-            }
+        // 채팅 로드
+        function loadMessages() {
+            const chatContent = document.getElementById("chatContent");
+            const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+            chatContent.innerHTML = "";
+            messages.forEach(msg => {
+                const messageDiv = document.createElement("div");
+                messageDiv.classList.add("message", msg.type);
+                messageDiv.innerHTML = `
+                    ${msg.type === "other" ? '<img src="images/profile1.jpg" alt="프로필 사진" class="message-profile-pic">' : ""}
+                    <div class="message-bubble">
+                        <p>${msg.text}</p>
+                        <span class="timestamp">${msg.timestamp}</span>
+                    </div>
+                `;
+                chatContent.appendChild(messageDiv);
+            });
+            chatContent.scrollTop = chatContent.scrollHeight;
         }
 
+        // 메시지 전송
         function sendMessage() {
             const messageInput = document.getElementById("messageInput");
             const messageText = messageInput.value.trim();
-
-            if (messageText === "") {
-                return;
-            }
-
-            const chatContent = document.getElementById("chatContent");
-            const newMessage = document.createElement("div");
-            newMessage.classList.add("message", "current");
+            if (!messageText) return;
 
             const now = new Date();
             const timestamp = `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일 오${now.getHours() >= 12 ? "후" : "전"} ${now.getHours() % 12 || 12}:${now.getMinutes().toString().padStart(2, "0")}`;
+            const newMessage = { type: "current", text: messageText, timestamp };
 
-            newMessage.innerHTML = `
-                <div class="message-bubble">
-                    <p>${messageText}</p>
-                    <span class="timestamp">${timestamp}</span>
-                </div>
-            `;
+            const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+            messages.push(newMessage);
+            localStorage.setItem("chatMessages", JSON.stringify(messages));
 
-            chatContent.appendChild(newMessage);
             messageInput.value = "";
-            chatContent.scrollTop = chatContent.scrollHeight;
+            loadMessages();
         }
 
-        document.getElementById("messageInput").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                sendMessage();
-            }
-        });
-
-        function showPopup() {
-            document.getElementById("profilePopup").style.display = "flex";
-        }
-
-        function hidePopup() {
-            document.getElementById("profilePopup").style.display = "none";
-        }
-
-        document.getElementById("profilePopup").addEventListener("click", function(event) {
-            if (event.target === this) {
-                hidePopup();
-            }
-        });
-
-        function toggleEmojiPanel() {
-            const emojiPanel = document.getElementById("emojiPanel");
-            if (emojiPanel.style.display === "block") {
-                emojiPanel.style.display = "none";
-            } else {
-                emojiPanel.style.display = "block";
-            }
-        }
-
+        // 이모지 전송
         function sendEmoji(emoji) {
-            const chatContent = document.getElementById("chatContent");
-            const newMessage = document.createElement("div");
-            newMessage.classList.add("message", "current");
-
             const now = new Date();
             const timestamp = `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일 오${now.getHours() >= 12 ? "후" : "전"} ${now.getHours() % 12 || 12}:${now.getMinutes().toString().padStart(2, "0")}`;
+            const newMessage = { type: "current", text: emoji, timestamp };
 
-            newMessage.innerHTML = `
-                <div class="message-bubble">
-                    <p>${emoji}</p>
-                    <span class="timestamp">${timestamp}</span>
-                </div>
-            `;
+            const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+            messages.push(newMessage);
+            localStorage.setItem("chatMessages", JSON.stringify(messages));
 
-            chatContent.appendChild(newMessage);
-            chatContent.scrollTop = chatContent.scrollHeight;
             document.getElementById("emojiPanel").style.display = "none";
+            loadMessages();
         }
 
-        document.addEventListener("click", function(event) {
-            const emojiPanel = document.getElementById("emojiPanel");
-            const emojiBtn = document.getElementById("emojiBtn");
-            if (!emojiPanel.contains(event.target) && !emojiBtn.contains(event.target)) {
-                emojiPanel.style.display = "none";
-            }
-        });
+        // 페이지 이동
+        function goToHome() { window.location.href = "home.html"; }
+        function goToSend() { window.location.href = "pay.html"; }
 
-        // 팔로우 토글 함수
+        // 결제, 차단, 신고
+        function confirmPayment() {
+            if (confirm("결제하시겠습니까?")) goToSend();
+            else alert("결제가 취소되었습니다.");
+        }
+        function confirmBlock() {
+            if (confirm("차단하시겠습니까?")) alert("차단되었습니다.");
+            else alert("차단이 취소되었습니다.");
+        }
+        function confirmReport() {
+            if (confirm("신고하시겠습니까?")) alert("신고가 접수되었습니다.");
+            else alert("신고가 취소되었습니다.");
+        }
+
+        // 팝업
+        function showPopup() {
+            const modal = new bootstrap.Modal(document.getElementById("profilePopup"));
+            modal.show();
+        }
+        function hidePopup() {
+            const modal = bootstrap.Modal.getInstance(document.getElementById("profilePopup"));
+            modal.hide();
+        }
+
+        // 이모지 패널 토글
+        function toggleEmojiPanel() {
+            const panel = document.getElementById("emojiPanel");
+            panel.style.display = panel.style.display === "block" ? "none" : "block";
+        }
+
+        // 팔로우 토글
         function toggleFollow() {
             const followBtn = document.getElementById("followBtn");
             const followText = document.getElementById("followText");
             const followHeart = document.getElementById("followHeart");
+            const isFollowing = followBtn.classList.contains("following");
 
-            if (followBtn.classList.contains("following")) {
-                followText.textContent = "팔로우";
-                followHeart.textContent = "♡";
-                followBtn.classList.remove("following");
-            } else {
-                followText.textContent = "팔로우 중";
-                followHeart.textContent = "♥";
-                followBtn.classList.add("following");
-            }
+            const profileData = JSON.parse(localStorage.getItem("profileData")) || { following: false };
+            profileData.following = !isFollowing;
+            localStorage.setItem("profileData", JSON.stringify(profileData));
+
+            followText.textContent = profileData.following ? "팔로우 중" : "팔로우";
+            followHeart.textContent = profileData.following ? "♥" : "♡";
+            followBtn.classList.toggle("following", profileData.following);
         }
+
+        // 초기 로드
+        document.addEventListener("DOMContentLoaded", () => {
+            loadMessages();
+            const profileData = JSON.parse(localStorage.getItem("profileData")) || { following: false };
+            if (profileData.following) {
+                document.getElementById("followText").textContent = "팔로우 중";
+                document.getElementById("followHeart").textContent = "♥";
+                document.getElementById("followBtn").classList.add("following");
+            }
+        });
+
+        // Enter 키로 메시지 전송
+        document.getElementById("messageInput").addEventListener("keypress", (e) => {
+            if (e.key === "Enter") sendMessage();
+        });
     </script>
 </body>
 </html>
