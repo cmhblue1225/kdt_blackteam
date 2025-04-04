@@ -14,8 +14,8 @@
             box-sizing: border-box;
         }
         html, body {
-            height: 100%; /* 전체 높이를 100%로 설정 */
-            overflow: hidden; /* 스크롤 방지 */
+            height: 100%;
+            overflow: hidden;
             font-family: 'Noto Sans KR', sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
@@ -23,14 +23,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px; /* 작은 화면에서 여백 확보 */
+            padding: 10px;
         }
         .chat-container {
             width: 100%;
-            max-width: 390px; /* 최대 너비 유지 */
+            max-width: 390px;
             height: 100%;
-            max-height: 844px; /* 최대 높이 유지 */
-            aspect-ratio: 390 / 844; /* 원래 비율 유지 (약 1:2.16) */
+            max-height: 844px;
+            aspect-ratio: 390 / 844;
             background-color: white;
             border-radius: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -117,6 +117,7 @@
         .message {
             display: flex;
             margin-bottom: 20px;
+            position: relative;
         }
         .message.other {
             justify-content: flex-start;
@@ -134,6 +135,7 @@
             max-width: 70%;
             padding: 10px 15px;
             border-radius: 15px;
+            position: relative;
         }
         .message.other .message-bubble {
             background-color: #ecf0f1;
@@ -148,6 +150,23 @@
             color: #7f8c8d;
             margin-top: 5px;
             display: block;
+        }
+        .message-options {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            font-size: 14px;
+            color: #7f8c8d;
+            cursor: pointer;
+        }
+        .message.other .message-options {
+            right: auto;
+            left: 5px;
+        }
+        .message-options:hover {
+            color: #2c3e50;
         }
         .message-input-area {
             display: flex;
@@ -246,16 +265,23 @@
             color: #7f8c8d;
             margin-bottom: 5px;
         }
-        .close-btn {
+        .close-btn, .delete-btn, .cancel-btn {
             background-color: #2c3e50;
             color: white;
             border: none;
             padding: 8px 15px;
             border-radius: 8px;
             transition: background-color 0.3s ease;
+            margin: 5px;
         }
-        .close-btn:hover {
+        .close-btn:hover, .delete-btn:hover {
             background-color: #34495e;
+        }
+        .cancel-btn {
+            background-color: #7f8c8d;
+        }
+        .cancel-btn:hover {
+            background-color: #95a5a6;
         }
         .follow-btn {
             background-color: #ecf0f1;
@@ -288,15 +314,15 @@
         }
         @media (max-height: 844px) {
             .chat-container {
-                height: calc(100vh - 20px); /* 화면 높이에 맞게 조정, 여백 고려 */
+                height: calc(100vh - 20px);
             }
         }
         @media (max-width: 390px) {
             .chat-container {
-                width: calc(100vw - 20px); /* 화면 너비에 맞게 조정, 여백 고려 */
+                width: calc(100vw - 20px);
             }
             .emoji-panel {
-                width: calc(100% - 40px); /* 컨테이너 너비에 맞게 조정 */
+                width: calc(100% - 40px);
                 left: 20px;
             }
         }
@@ -335,7 +361,7 @@
         </div>
     </div>
 
-    <!-- 팝업 (Bootstrap Modal) -->
+    <!-- 프로필 팝업 (Bootstrap Modal) -->
     <div class="modal fade" id="profilePopup" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -349,6 +375,17 @@
                     <span id="followText">팔로우</span>
                     <span class="heart" id="followHeart">♡</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 메시지 삭제 확인 팝업 (Bootstrap Modal) -->
+    <div class="modal fade" id="deleteMessagePopup" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <p>메시지를 삭제하시겠습니까?</p>
+                <button class="delete-btn" onclick="deleteMessage()">삭제</button>
+                <button class="cancel-btn" onclick="hideDeletePopup()">취소</button>
             </div>
         </div>
     </div>
@@ -368,12 +405,14 @@
             localStorage.setItem("chatMessages", JSON.stringify(initialMessages));
         }
 
+        let selectedMessageIndex = null;
+
         // 채팅 로드
         function loadMessages() {
             const chatContent = document.getElementById("chatContent");
             const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
             chatContent.innerHTML = "";
-            messages.forEach(msg => {
+            messages.forEach((msg, index) => {
                 const messageDiv = document.createElement("div");
                 messageDiv.classList.add("message", msg.type);
                 messageDiv.innerHTML = `
@@ -382,6 +421,7 @@
                         <p>${msg.text}</p>
                         <span class="timestamp">${msg.timestamp}</span>
                     </div>
+                    <button class="message-options" onclick="showDeletePopup(${index})">⋮</button>
                 `;
                 chatContent.appendChild(messageDiv);
             });
@@ -438,7 +478,7 @@
             else alert("신고가 취소되었습니다.");
         }
 
-        // 팝업
+        // 프로필 팝업
         function showPopup() {
             const modal = new bootstrap.Modal(document.getElementById("profilePopup"));
             modal.show();
@@ -468,6 +508,32 @@
             followText.textContent = profileData.following ? "팔로우 중" : "팔로우";
             followHeart.textContent = profileData.following ? "♥" : "♡";
             followBtn.classList.toggle("following", profileData.following);
+        }
+
+        // 메시지 삭제 팝업 표시
+        function showDeletePopup(index) {
+            selectedMessageIndex = index;
+            const modal = new bootstrap.Modal(document.getElementById("deleteMessagePopup"));
+            modal.show();
+        }
+
+        // 메시지 삭제 팝업 닫기
+        function hideDeletePopup() {
+            const modal = bootstrap.Modal.getInstance(document.getElementById("deleteMessagePopup"));
+            modal.hide();
+        }
+
+        // 메시지 삭제
+        function deleteMessage() {
+            if (selectedMessageIndex === null) return;
+
+            const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+            messages.splice(selectedMessageIndex, 1); // 선택된 메시지 삭제
+            localStorage.setItem("chatMessages", JSON.stringify(messages));
+            loadMessages();
+
+            hideDeletePopup();
+            selectedMessageIndex = null;
         }
 
         // 초기 로드
