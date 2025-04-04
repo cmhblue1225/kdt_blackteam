@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>검색</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header-container {
+            background-color: #ffffff;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 15px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #2c3e50;
+            transition: color 0.3s ease;
+        }
+        .back-btn:hover {
+            color: #3498db;
+        }
+
+        .header .title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .header .empty-space {
+            width: 24px;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 390px;
+            max-width: 400px;
+            height: 600px;
+            margin: 15px auto;
+            position: relative;
+        }
+
+        .manage-favorites-btn-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 12px;
+        }
+
+        .manage-favorites-btn {
+            background: linear-gradient(135deg, #2c3e50, #4a6278);
+            padding: 6px 10px;
+            font-size: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .manage-favorites-btn:hover {
+            background: linear-gradient(135deg, #34495e, #5a738c);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .search-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin-bottom: 12px;
+            flex-grow: 1;
+            max-height: calc(600px - 300px);
+        }
+
+        .section {
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+        }
+
+        .search-input {
+            padding: 10px;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            border: 1px solid #dfe6e9;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        .search-results {
+            width: 100%;
+            display: none;
+            flex-direction: column;
+            gap: 0;
+            max-height: 150px;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .search-results::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .search-results::-webkit-scrollbar-track {
+            background: #dfe6e9;
+            border-radius: 10px;
+        }
+
+        .search-results::-webkit-scrollbar-thumb {
+            background: #2c3e50;
+            border-radius: 10px;
+        }
+
+        .search-results::-webkit-scrollbar-thumb:hover {
+            background: #34495e;
+        }
+
+        .search-results.active {
+            display: flex;
+        }
+
+        .favorites,
+        .search-result {
+            padding: 10px 12px;
+            background-color: #f8f9fa;
+            border: 1px solid #dfe6e9;
+            border-bottom: none;
+            text-align: left;
+            color: #2c3e50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-results .favorites {
+            border-top: 1px solid #dfe6e9;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .search-results .search-result:last-child {
+            border-bottom: 1px solid #dfe6e9;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .favorites .star-icon,
+        .search-result .star-icon {
+            font-size: 16px;
+            cursor: pointer;
+            color: #3498db;
+        }
+
+        .map {
+            width: 87%; /* 너비를 80%로 수정 */
+            height: 220px;
+            background-color: #f8f9fa;
+            padding: 80px 0;
+            text-align: center;
+            font-size: 14px;
+            border-radius: 8px;
+            color: #2c3e50;
+            border: 1px solid #dfe6e9;
+            position: absolute;
+            bottom: 70px;
+            left: 50%; /* 가운데 정렬을 위해 */
+            transform: translateX(-50%); /* X축 기준으로 -50% 이동 */
+        }
+
+        .register-btn {
+            width: 50%;
+            max-width: 120px;
+            background: linear-gradient(135deg, #2c3e50, #4a6278);
+            padding: 8px 0;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #fff;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .register-btn:hover {
+            background: linear-gradient(135deg, #34495e, #5a738c);
+            transform: translate(-50%, -2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <div class="header-container">
+            <div class="header">
+                <button class="back-btn" onclick="goToHome()">←</button>
+                <div class="title">검색</div>
+                <div class="empty-space"></div>
+            </div>
+        </div>
+        <div class="manage-favorites-btn-container">
+            <a href="favorites.html" class="manage-favorites-btn">즐겨찾기 관리</a>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="위치를 검색하세요">
+            <div class="search-results">
+                <div class="favorites">
+                    즐겨찾는 위치
+                    <span class="star-icon">⭐</span>
+                </div>
+            </div>
+        </div>
+        <div class="map">지도</div>
+        <div class="register-btn">등록</div>
+    </div>
+
+    <script>
+        function goToHome() {
+            window.location.href = "home.html";
+        }
+
+        const sampleLocations = [
+            "검색결과 1",
+            "검색결과 2",
+            "검색결과 3",
+            "검색결과 4"
+        ];
+
+        const searchInput = document.querySelector('.search-input');
+        const searchResults = document.querySelector('.search-results');
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim().toLowerCase();
+
+            searchResults.innerHTML = `
+                <div class="favorites">
+                    즐겨찾는 위치
+                    <span class="star-icon">⭐</span>
+                </div>
+            `;
+
+            if (query === '') {
+                searchResults.classList.remove('active');
+                return;
+            }
+
+            const filteredResults = sampleLocations.filter(location =>
+                location.toLowerCase().includes(query)
+            );
+
+            if (filteredResults.length > 0) {
+                filteredResults.forEach((location, index) => {
+                    const isLast = index === filteredResults.length - 1 ? 'border-bottom: 1px solid #dfe6e9; border-radius: 0 0 8px 8px;' : '';
+                    searchResults.innerHTML += `
+                        <div class="search-result" style="${isLast}">
+                            ${location}
+                            <span class="star-icon">☆</span>
+                        </div>
+                    `;
+                });
+                searchResults.classList.add('active');
+            } else {
+                searchResults.innerHTML += `
+                    <div class="search-result" style="border-bottom: 1px solid #dfe6e9; border-radius: 0 0 8px 8px;">
+                        검색 결과가 없습니다
+                        <span class="star-icon">☆</span>
+                    </div>
+                `;
+                searchResults.classList.add('active');
+            }
+        });
+
+        searchResults.addEventListener('click', function(e) {
+            if (e.target.classList.contains('star-icon')) {
+                e.target.textContent = e.target.textContent === '⭐' ? '☆' : '⭐';
+            }
+        });
+    </script>
+</body>
+</html>
